@@ -9,6 +9,11 @@ print('Part 1 multiplied together =', num)
 # Part 2: Add all items together
 part2 = [-1, 23, 483, 8573, -13847, -381569, 1652337, 718522177]
 
+num = 0
+for i in range(len(part2)):
+    num += part2[i]
+print('Part 2 added together =', num)
+
 # Part 3: Add only even items together
 part3 = [146, 875, 911, 83, 81, 439, 44, 5, 46, 76, 61, 68, 1, 14, 38, 26, 21] 
 
