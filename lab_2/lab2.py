@@ -1,6 +1,11 @@
 # Part 1: Multiply all items together
 part1 = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
 
+num = 1
+for i in range(len(part1)):
+    num *= part1[i]
+print('Part 1 multiplied together =', num)
+
 # Part 2: Add all items together
 part2 = [-1, 23, 483, 8573, -13847, -381569, 1652337, 718522177]
 
