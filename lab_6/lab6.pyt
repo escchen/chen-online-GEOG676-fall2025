@@ -39,9 +39,9 @@ class GraduatedColorsRenderer:
             direction="Input"
         )
         param2 = arcpy.Parameter(
-            displayName="Garage CSV File",
-            name="GarageCSVFile",
-            datatype="DEFile",
+            displayName="Output Location",
+            name="OutputLocation",
+            datatype="DEFolder",
             parameterType="Required",
             direction="Input"
         )
@@ -72,18 +72,13 @@ class GraduatedColorsRenderer:
 
     def execute(self, parameters, messages):
         """The source code of the tool."""
-        return
-
-    def postExecute(self, parameters):
-        """This method takes place after outputs are processed and
-        added to the display."""
         readTime = 3 # time for users to read the progress
         start = 0 # beginning position of the progressor
         map = 100 # end position
         step = 33  # progress interval to move the progressor along
 
-        arcpy.SetProgress("step", "Validating Project File...", start, max, step)
-        time.sleep(readTime) # pause the execution for 2.5 seconds
+        arcpy.SetProgressor("step", "Validating Project File...", start, max, step)
+        time.sleep(readTime) # pause the execution for 3 seconds
 
         arcpy.AddMessage("Validating Project File...")
 
@@ -91,6 +86,7 @@ class GraduatedColorsRenderer:
         
         campus = project.listMaps('Maps')[0]
 
+        # increment progressor
         arcpy.SetProgressorPosition(start + step)
         arcpy.SetProgressorLabel("Finding your map layer...")
         time.sleep(readTime)
@@ -101,20 +97,27 @@ class GraduatedColorsRenderer:
                 symbology = layer.symbology
                 if hasattr(symbology, 'renderer'):
                     if layer.name == parameters[1].valueAsText:
-                        arcpy.SetProgressorPosition(start + step*2)
+                        # increment progressor
+                        arcpy.SetProgressorPosition(start + step)
                         arcpy.SetProgressorLabel("Calculating and classifying...")
                         time.sleep(readTime)
                         arcpy.AddMessage("Calculating and classifying...")
 
                         symbology.updateRenderer('GraduatedColorsRenderer')
                         symbology.renderer.classificationField = "Shape_Area"
+
+                        # Increment progressor
+                        arcpy.SetProgressorPosition(start + step*2)
+                        arcpy.SetProgressorLabel("Cleaning up...")
+                        time.sleep(readTime)
+                        arcpy.AddMessage("Cleaning up...")
+
                         symbology.renderer.breakCount = 5
                         symbology.renderer.colorRamp = project.listColorRamps('Oranges (5 Classes)')[0]
-
                         layer.symbology = symbology
                         arcpy.AddMessage("Finish Generating Layer...")
                     else:
-                        print("NO layers found")
+                        print("NO feature layers found")
 
         arcpy.SetProgressorPosition(start + step*3)
         arcpy.SetProgressorLabel("Saving...")
@@ -122,4 +125,9 @@ class GraduatedColorsRenderer:
         arcpy.AddMessage("Saving...")
 
         project.saveACopy(parameters[2].valueAsText + "\\" + parameters[3].valueAsText + ".aprx")
+        return
+
+    def postExecute(self, parameters):
+        """This method takes place after outputs are processed and
+        added to the display."""
         return
