@@ -74,17 +74,15 @@ class GraduatedColorsRenderer:
         """The source code of the tool."""
         readTime = 3 # time for users to read the progress
         start = 0 # beginning position of the progressor
-        map = 100 # end position
+        max = 100 # end position
         step = 33  # progress interval to move the progressor along
 
         arcpy.SetProgressor("step", "Validating Project File...", start, max, step)
         time.sleep(readTime) # pause the execution for 3 seconds
-
         arcpy.AddMessage("Validating Project File...")
 
         project = arcpy.mp.ArcGISProject(parameters[0].valueAsText)
-        
-        campus = project.listMaps('Maps')[0]
+        campus = project.listMaps('Map')[0]
 
         # increment progressor
         arcpy.SetProgressorPosition(start + step)
